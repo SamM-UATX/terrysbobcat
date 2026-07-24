@@ -5,19 +5,24 @@ in a browser and it works.
 
 ## Files
 
-- `index.html` — all page content
-- `css/styles.css` — all styling (colors, fonts, layout)
-- `js/main.js` — mobile menu, FAQ accordion, scroll animations
+- `index.html` — homepage
+- `who-we-are.html` — Terry's bio page
+- `methods/cave-in-removal.html`, `methods/partial-removal.html`, `methods/complete-removal.html`
+  — one detail page per removal method, linked from the homepage service cards
+- `css/styles.css` — all styling (colors, fonts, layout), shared by every page
+- `js/main.js` — mobile menu, FAQ accordion, before/after slider, scroll animations,
+  shared by every page
 - `favicon.svg` — browser tab icon
-- `images/gallery/` — the 8 web-ready photos currently shown in the gallery section
+- `images/logo-terry-portrait.jpg` — header logo photo (bust crop)
+- `images/logo-concepts/` — other Gemini-generated logo options, kept for reference
+- `images/gallery/` — the web-ready photos used across the site
 - `images/gallery/originals/` — full-resolution source photos (not used directly on
   the site, not tracked in git — this folder is just local storage/backup for you)
 
-## Adding more real photos
+Pages inside `methods/` are one folder deep, so their links to CSS/JS/images/other
+pages all start with `../` — keep that in mind if you copy one to make a new page.
 
-The gallery currently shows 8 selected job photos (pool demo, Bobcat on site,
-mid-demolition, excavating, backfill/grading, a hillside job, Terry on site, and a
-finished yard). To add more:
+## Adding more real photos
 
 1. Put the full-size photo in `images/gallery/originals/`.
 2. Resize/compress it for the web (full phone photos are 3-8MB each, way too big for
@@ -26,16 +31,22 @@ finished yard). To add more:
    sips -Z 1400 -s format jpeg -s formatOptions 58 images/gallery/originals/YOURPHOTO.jpeg --out images/gallery/short-descriptive-name.jpg
    ```
    This targets roughly 400-500KB per photo, which keeps the page fast.
-3. In `index.html`, find the `gallery-grid` section (search for `gallery-slot`) and
-   add another line following the existing pattern:
+
+   **Watch for sideways photos:** some iPhone photos store an EXIF "Orientation" tag
+   instead of physically rotating the pixels — `sips` doesn't always respect it, which
+   can produce a genuinely sideways image even though it looked fine in Preview. If a
+   photo comes out rotated, use this instead (respects EXIF correctly, needs
+   `pip install Pillow` once):
+   ```
+   python3 -c "from PIL import Image, ImageOps; ImageOps.exif_transpose(Image.open('images/gallery/originals/YOURPHOTO.jpeg')).convert('RGB').save('images/gallery/short-descriptive-name.jpg', quality=80)"
+   ```
+3. Add an `<img>` tag following the existing pattern in whichever section it belongs —
+   e.g. in `index.html`'s `gallery-grid` (search for `gallery-slot`):
    ```html
    <div class="gallery-slot reveal"><img src="images/gallery/short-descriptive-name.jpg" alt="Describe what's in the photo" loading="lazy" width="1400" height="1050"></div>
    ```
    Write a real, specific `alt` description (not just a filename) — it helps both
    accessibility and Google image search.
-
-The hero section can also take a real photo later — ask if you want that wired in
-once you've picked a favorite.
 
 ## Updating contact info
 
