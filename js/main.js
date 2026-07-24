@@ -37,6 +37,41 @@
     });
   });
 
+  // Before/after slider
+  document.querySelectorAll("[data-ba-slider]").forEach(function (slider) {
+    var handle = slider.querySelector(".ba-handle");
+    var dragging = false;
+
+    function setPosition(clientX) {
+      var rect = slider.getBoundingClientRect();
+      var pct = ((clientX - rect.left) / rect.width) * 100;
+      pct = Math.max(0, Math.min(100, pct));
+      slider.style.setProperty("--ba-pos", pct + "%");
+      handle.setAttribute("aria-valuenow", Math.round(pct));
+    }
+
+    slider.addEventListener("pointerdown", function (e) {
+      dragging = true;
+      slider.setPointerCapture(e.pointerId);
+      setPosition(e.clientX);
+    });
+    slider.addEventListener("pointermove", function (e) {
+      if (dragging) setPosition(e.clientX);
+    });
+    slider.addEventListener("pointerup", function () { dragging = false; });
+    slider.addEventListener("pointercancel", function () { dragging = false; });
+
+    handle.addEventListener("keydown", function (e) {
+      var current = parseFloat(handle.getAttribute("aria-valuenow")) || 50;
+      if (e.key === "ArrowLeft") { current = Math.max(0, current - 5); }
+      else if (e.key === "ArrowRight") { current = Math.min(100, current + 5); }
+      else { return; }
+      e.preventDefault();
+      slider.style.setProperty("--ba-pos", current + "%");
+      handle.setAttribute("aria-valuenow", current);
+    });
+  });
+
   // Scroll reveal
   var revealEls = document.querySelectorAll(".reveal");
   if ("IntersectionObserver" in window && revealEls.length) {
