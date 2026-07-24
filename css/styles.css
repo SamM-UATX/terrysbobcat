@@ -109,16 +109,18 @@ button { font-family: inherit; }
 /* ===== Hero ===== */
 .hero {
   position: relative;
-  background: linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
+  background: var(--navy-deep);
   color: #fff;
   padding: 108px 0 84px;
   overflow: hidden;
 }
-.hero-contours {
+.hero-bg {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 35%;
+}
+.hero-overlay {
   position: absolute; inset: 0; pointer-events: none;
-  background-image:
-    repeating-radial-gradient(ellipse at 82% 22%, transparent 0, transparent 34px, rgba(255,255,255,.045) 35px, rgba(255,255,255,.045) 36px),
-    repeating-radial-gradient(ellipse at 8% 90%, transparent 0, transparent 46px, rgba(26,127,212,.10) 47px, rgba(26,127,212,.10) 48px);
+  background:
+    linear-gradient(180deg, rgba(10,28,46,.88) 0%, rgba(10,28,46,.80) 55%, rgba(10,28,46,.94) 100%);
 }
 .hero-inner { position: relative; max-width: 760px; }
 .hero .eyebrow { color: var(--amber); }
@@ -139,6 +141,17 @@ button { font-family: inherit; }
 .capability { background: var(--paper-tint); padding: 72px 0; text-align: center; }
 .capability h2 { max-width: 720px; margin-left: auto; margin-right: auto; }
 .capability .section-lede { max-width: 680px; margin: 0 auto; }
+
+/* ===== Equipment band ===== */
+.equipment-band { position: relative; }
+.equipment-band img { width: 100%; height: min(60vw, 460px); object-fit: cover; display: block; }
+.equipment-caption {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(0deg, rgba(10,28,46,.85) 0%, rgba(10,28,46,0) 100%);
+  color: #fff; padding: 60px 24px 24px;
+}
+.equipment-caption .eyebrow { color: var(--amber); margin-bottom: 6px; }
+.equipment-caption p:last-child { color: rgba(255,255,255,.88); max-width: 560px; margin: 0; font-size: .95rem; }
 
 /* ===== Cards ===== */
 .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px; }
@@ -182,6 +195,12 @@ button { font-family: inherit; }
 }
 .gallery-slot img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s ease; }
 .gallery-slot:hover img { transform: scale(1.04); }
+.pair-tag {
+  position: absolute; top: 12px; left: 12px; font-family: var(--font-head); font-weight: 700; font-size: .72rem;
+  letter-spacing: .05em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px;
+  background: var(--navy); color: #fff;
+}
+.pair-after .pair-tag { background: var(--amber); color: var(--navy-deep); }
 
 /* ===== Testimonials ===== */
 .testimonials { background: var(--paper-tint); }
