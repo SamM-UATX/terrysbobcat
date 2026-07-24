@@ -9,21 +9,30 @@ in a browser and it works.
 - `css/styles.css` — all styling (colors, fonts, layout)
 - `js/main.js` — mobile menu, FAQ accordion, scroll animations
 - `favicon.svg` — browser tab icon
-- `images/gallery/` — drop real job photos here (see below)
+- `images/gallery/` — the 8 web-ready photos currently shown in the gallery section
+- `images/gallery/originals/` — full-resolution source photos (not used directly on
+  the site, not tracked in git — this folder is just local storage/backup for you)
 
-## Adding real photos
+## Adding more real photos
 
-1. Put image files in `images/gallery/` (e.g. `before-1.jpg`, `bobcat-pool.jpg`).
-2. In `index.html`, find the `gallery-grid` section (search for `gallery-slot`).
-3. Replace a placeholder line like:
-   ```html
-   <div class="gallery-slot reveal" data-label="Before — full pool"></div>
+The gallery currently shows 8 selected job photos (pool demo, Bobcat on site,
+mid-demolition, excavating, backfill/grading, a hillside job, Terry on site, and a
+finished yard). To add more:
+
+1. Put the full-size photo in `images/gallery/originals/`.
+2. Resize/compress it for the web (full phone photos are 3-8MB each, way too big for
+   a fast page load) — from the project folder, run:
    ```
-   with:
-   ```html
-   <div class="gallery-slot reveal" style="background-image:url('images/gallery/before-1.jpg')"></div>
+   sips -Z 1400 -s format jpeg -s formatOptions 58 images/gallery/originals/YOURPHOTO.jpeg --out images/gallery/short-descriptive-name.jpg
    ```
-4. Repeat for each photo. The layout automatically crops/fits any photo size.
+   This targets roughly 400-500KB per photo, which keeps the page fast.
+3. In `index.html`, find the `gallery-grid` section (search for `gallery-slot`) and
+   add another line following the existing pattern:
+   ```html
+   <div class="gallery-slot reveal"><img src="images/gallery/short-descriptive-name.jpg" alt="Describe what's in the photo" loading="lazy" width="1400" height="1050"></div>
+   ```
+   Write a real, specific `alt` description (not just a filename) — it helps both
+   accessibility and Google image search.
 
 The hero section can also take a real photo later — ask if you want that wired in
 once you've picked a favorite.

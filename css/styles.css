@@ -170,16 +170,18 @@ button { font-family: inherit; }
 .gallery-slot {
   aspect-ratio: 4 / 3; border-radius: var(--radius-lg); position: relative; overflow: hidden;
   background-color: var(--paper-tint);
+}
+.gallery-slot:empty {
   background-image: repeating-linear-gradient(135deg, rgba(15,42,68,.05) 0 2px, transparent 2px 14px);
   border: 1.5px dashed var(--line);
-  background-size: cover; background-position: center;
 }
-.gallery-slot::after {
+.gallery-slot:empty::after {
   content: attr(data-label);
   position: absolute; left: 14px; bottom: 14px; right: 14px;
   font-family: var(--font-head); font-size: .78rem; font-weight: 600; color: var(--ink-soft);
 }
-.gallery-slot[style*="background-image"]::after { display: none; }
+.gallery-slot img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s ease; }
+.gallery-slot:hover img { transform: scale(1.04); }
 
 /* ===== Testimonials ===== */
 .testimonials { background: var(--paper-tint); }
