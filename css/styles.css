@@ -88,7 +88,6 @@ button { font-family: inherit; }
 .logo { display: flex; align-items: center; gap: 16px; text-decoration: none; margin-right: auto; }
 .logo-photo {
   width: 58px; height: 92px; border-radius: 14px; object-fit: cover; object-position: 50% 12%; display: block;
-  border: 2px solid var(--paper); box-shadow: 0 0 0 2px var(--line), 0 3px 8px rgba(15,42,68,.18);
 }
 .logo-text { display: flex; flex-direction: column; line-height: 1.2; }
 .logo-name { font-family: var(--font-head); font-weight: 800; font-size: 1.5rem; color: var(--navy); }
@@ -211,12 +210,15 @@ button { font-family: inherit; }
 .card p { margin: 0; font-size: .95rem; }
 
 .card-photo {
-  padding: 0; overflow: hidden; display: flex; flex-direction: column;
+  display: flex; flex-direction: column;
   text-decoration: none; color: inherit; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
 }
-.card-photo img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; object-position: 50% 50%; display: block; }
-.card-photo img.crop-top { object-position: 50% 12%; }
-.card-photo .card-body { padding: 24px 22px; }
+.card-photo .thumb {
+  width: 88px; height: 88px; border-radius: 12px; object-fit: cover; object-position: 50% 50%; display: block;
+  margin-bottom: 18px;
+}
+.card-photo .thumb.crop-top { object-position: 50% 18%; }
+.card-photo .card-body { padding: 0; }
 .card-photo .card-body h3 { font-size: 1.1rem; }
 .card-photo .card-body p { font-size: .92rem; }
 .method-grid .card-photo:hover { transform: translateY(-3px); box-shadow: 0 4px 10px rgba(15,42,68,.08), 0 16px 32px -14px rgba(15,42,68,.28); border-color: var(--accent); }
