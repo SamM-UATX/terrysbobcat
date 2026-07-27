@@ -50,9 +50,10 @@ pages all start with `../` — keep that in mind if you copy one to make a new p
 
 ## Updating contact info
 
-- Phone number appears in several places — search `index.html` for `4086054224` and
-  `(408) 605-4224` and replace both the digits-only version (in `tel:` links and the
-  JSON-LD schema) and the display version.
+- Phone number appears in several places across every page (`index.html`,
+  `who-we-are.html`, `methods/*.html`) — search for `4084592682` and `(408) 459-2682`
+  and replace both the digits-only version (in `tel:` links and the JSON-LD schema)
+  and the display version.
 - Once the new business email exists, uncomment the email lines in the footer and
   add it wherever noted in the HTML comments.
 - Once social accounts exist, uncomment the `footer-social` block in the footer and
