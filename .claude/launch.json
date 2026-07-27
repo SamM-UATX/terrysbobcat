@@ -3,9 +3,10 @@
   "configurations": [
     {
       "name": "terrysbobcat-site",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8037"],
-      "port": 8037
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "python3 -m http.server \"$PORT\""],
+      "port": 8037,
+      "autoPort": true
     }
   ]
 }

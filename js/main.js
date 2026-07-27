@@ -72,6 +72,44 @@
     });
   });
 
+  // Contact form: highlight invalid fields (native validation still governs submission)
+  var contactForm = document.querySelector(".contact-form");
+  if (contactForm) {
+    var requiredFields = contactForm.querySelectorAll("[required]");
+    requiredFields.forEach(function (field) {
+      field.addEventListener("invalid", function () {
+        var row = field.closest(".form-row");
+        if (row) row.classList.add("invalid");
+      });
+      field.addEventListener("input", function () {
+        var row = field.closest(".form-row");
+        if (row && field.checkValidity()) row.classList.remove("invalid");
+      });
+    });
+  }
+
+  // Gallery lightbox
+  var lightbox = document.getElementById("lightbox");
+  if (lightbox) {
+    var lightboxImg = lightbox.querySelector("img");
+    var lightboxCaption = lightbox.querySelector(".lightbox-caption");
+    document.querySelectorAll("[data-lightbox-trigger]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var img = btn.querySelector("img");
+        lightboxImg.src = img.getAttribute("src");
+        lightboxImg.alt = img.getAttribute("alt") || "";
+        lightboxCaption.textContent = btn.getAttribute("data-caption") || "";
+        lightbox.showModal();
+      });
+    });
+    lightbox.querySelector(".lightbox-close").addEventListener("click", function () {
+      lightbox.close();
+    });
+    lightbox.addEventListener("click", function (e) {
+      if (e.target === lightbox) lightbox.close();
+    });
+  }
+
   // Scroll reveal
   var revealEls = document.querySelectorAll(".reveal");
   if ("IntersectionObserver" in window && revealEls.length) {
