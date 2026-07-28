@@ -1,93 +1,177 @@
 # Terry's Bobcat Swimming Pool Removal — website
 
-Plain HTML/CSS/JS site. No build step, no dependencies to install — open `index.html`
-in a browser and it works.
+Plain HTML/CSS/JS site. No build step, no framework, no npm install. Pages use
+clean, directory-based URLs (e.g. `/services/pool-removal/`) instead of `.html`
+file names, which is why **local preview needs a tiny local server** — see below.
 
-## Files
+## Site structure
 
-- `index.html` — homepage
-- `who-we-are.html` — Terry's bio page
-- `methods/cave-in-removal.html`, `methods/partial-removal.html`, `methods/complete-removal.html`
-  — one detail page per removal method, linked from the homepage service cards
-- `css/styles.css` — all styling (colors, fonts, layout), shared by every page
-- `js/main.js` — mobile menu, FAQ accordion, before/after slider, scroll animations,
-  shared by every page
-- `favicon.svg` — browser tab icon
-- `images/logo-terry-portrait.jpg` — header logo photo (bust crop)
-- `images/logo-concepts/` — other Gemini-generated logo options, kept for reference
-- `images/gallery/` — the web-ready photos used across the site
-- `images/gallery/originals/` — full-resolution source photos (not used directly on
-  the site, not tracked in git — this folder is just local storage/backup for you)
+```
+index.html                              Home
+services/index.html                     Services overview
+services/pool-removal/index.html        Pool removal (cave-in/partial/complete + backfill)
+services/grading-excavation/index.html  Grading & excavation
+services/retaining-walls/index.html     Retaining walls & hillside stabilization
+services/demolition-hauling/index.html  Demolition & debris hauling
+gallery/index.html                      Project gallery (with lightbox)
+service-area/index.html                 Service area (city list)
+about/index.html                        About Terry
+faq/index.html                          General FAQ
+contact/index.html                      Contact form + info
+contact/thanks/index.html               Form success page (Netlify redirects here)
+css/styles.css                          All styling — shared by every page
+js/main.js                              Mobile menu, accordion, before/after slider,
+                                         gallery lightbox, form validation highlighting,
+                                         scroll reveal — shared by every page
+favicon.svg                             Browser tab icon
+sitemap.xml, robots.txt                 SEO plumbing
+images/logo-watercolor-portrait.jpg     Header/nav logo (cropped from the Gemini
+                                         watercolor concept — text-free)
+images/logo-terry-portrait.jpg          Real photo of Terry, used on the About page
+images/logo-concepts/                   Other Gemini-generated logo concepts, kept
+                                         for reference (not used on the live site)
+images/gallery/                         Web-ready photos used across the site
+images/gallery/originals/               Full-resolution source photos, not tracked in
+                                         git, not used directly on the site — local
+                                         backup only
+```
 
-Pages inside `methods/` are one folder deep, so their links to CSS/JS/images/other
-pages all start with `../` — keep that in mind if you copy one to make a new page.
+Every page links to shared assets with **root-relative paths** (`/css/styles.css`,
+`/images/...`, `/services/pool-removal/`) rather than relative `../` paths. This
+keeps every page's markup identical regardless of how deep it is nested, but it
+means the site must be served from a domain/server root — see Local preview below.
+
+## Local preview
+
+Root-relative paths mean you can't just double-click `index.html` anymore (the
+browser would look for `/css/styles.css` on your hard drive, not in the project).
+Run a tiny local server from the project folder instead:
+
+```
+python3 -m http.server 8037
+```
+
+then visit `http://localhost:8037`. (This project also has a `.claude/launch.json`
+entry named `terrysbobcat-site` if you're using Claude Code's preview tools.)
+Python's server automatically serves each folder's `index.html`, so
+`http://localhost:8037/services/pool-removal/` works exactly like it will in
+production.
 
 ## Adding more real photos
 
 1. Put the full-size photo in `images/gallery/originals/`.
 2. Resize/compress it for the web (full phone photos are 3-8MB each, way too big for
-   a fast page load) — from the project folder, run:
+   a fast page load). iPhone photos often carry an EXIF rotation tag that `sips`
+   doesn't always respect, so use Pillow instead (`pip install Pillow` once, or see
+   the venv trick below if your system Python is externally managed):
    ```
-   sips -Z 1400 -s format jpeg -s formatOptions 58 images/gallery/originals/YOURPHOTO.jpeg --out images/gallery/short-descriptive-name.jpg
+   python3 -c "from PIL import Image, ImageOps; ImageOps.exif_transpose(Image.open('images/gallery/originals/YOURPHOTO.jpeg')).convert('RGB').save('images/gallery/short-descriptive-name.jpg', quality=62)"
    ```
-   This targets roughly 400-500KB per photo, which keeps the page fast.
-
-   **Watch for sideways photos:** some iPhone photos store an EXIF "Orientation" tag
-   instead of physically rotating the pixels — `sips` doesn't always respect it, which
-   can produce a genuinely sideways image even though it looked fine in Preview. If a
-   photo comes out rotated, use this instead (respects EXIF correctly, needs
-   `pip install Pillow` once):
+   This targets roughly 250-450KB per photo at 1400px wide, which keeps pages fast.
+   If `pip install Pillow` refuses because Python is "externally managed":
    ```
-   python3 -c "from PIL import Image, ImageOps; ImageOps.exif_transpose(Image.open('images/gallery/originals/YOURPHOTO.jpeg')).convert('RGB').save('images/gallery/short-descriptive-name.jpg', quality=80)"
+   python3 -m venv /tmp/imgvenv && /tmp/imgvenv/bin/pip install Pillow
+   /tmp/imgvenv/bin/python3 -c "from PIL import Image, ImageOps; ..."
    ```
-3. Add an `<img>` tag following the existing pattern in whichever section it belongs —
-   e.g. in `index.html`'s `gallery-grid` (search for `gallery-slot`):
+3. Add an `<img>` tag following the existing pattern wherever it belongs — e.g. in
+   `gallery/index.html`'s `gallery-grid` (search for `gallery-slot`):
    ```html
-   <div class="gallery-slot reveal"><img src="images/gallery/short-descriptive-name.jpg" alt="Describe what's in the photo" loading="lazy" width="1400" height="1050"></div>
+   <button type="button" class="gallery-slot reveal" data-lightbox-trigger data-caption="Full sentence description.">
+     <img src="/images/gallery/short-descriptive-name.jpg" alt="Describe what's in the photo" loading="lazy" width="1400" height="1050">
+     <p class="cap">Short caption</p>
+   </button>
    ```
    Write a real, specific `alt` description (not just a filename) — it helps both
    accessibility and Google image search.
 
 ## Updating contact info
 
-- Phone number appears in several places across every page (`index.html`,
-  `who-we-are.html`, `methods/*.html`) — search for `4084592682` and `(408) 459-2682`
-  and replace both the digits-only version (in `tel:` links and the JSON-LD schema)
-  and the display version.
-- Once the new business email exists, uncomment the email lines in the footer and
-  add it wherever noted in the HTML comments.
-- Once social accounts exist, uncomment the `footer-social` block in the footer and
-  add the real links.
+- **Phone** appears on every page (nav, hero, footer, mobile call button, `tel:`
+  links, and each page's JSON-LD). Search the whole project for `4084592682` and
+  `(408) 459-2682` and replace both the digits-only version and the display version.
+- **Email** (`Terrysbobcatservices@gmail.com`) is in the footer of every page and
+  in the homepage's `LocalBusiness` JSON-LD. Search for `Terrysbobcatservices@gmail.com`
+  if it ever needs to change.
+
+## Contact form — what's configured vs. what you must do before launch
+
+The `/contact/` form is wired for **Netlify Forms** (matches the Netlify deploy path
+below) using a real, JS-free HTML submission — no fake success states:
+
+- `data-netlify="true"`, a hidden `form-name` field, and `netlify-honeypot="bot-field"`
+  are already on the `<form>` in `contact/index.html`.
+- A real (but visually hidden, `aria-hidden`) honeypot field is included for spam
+  protection.
+- The optional project-photo upload uses `enctype="multipart/form-data"`, which
+  Netlify Forms supports natively.
+- Required-field validation is native HTML5 (`required`, `type="email"`, etc.) —
+  works with no JavaScript; `js/main.js` only adds a visual red-border highlight on
+  top of the browser's own validation messages.
+- On success, Netlify redirects to `/contact/thanks/`, a real static confirmation
+  page — there is no fake "submitted!" message shown without an actual submission.
+
+**Before launch, you must:**
+1. Deploy to Netlify (see below) — Netlify Forms only works once the site is built
+   and deployed through Netlify's own system. It will **not** work from
+   `python3 -m http.server`, GitHub Pages, or any other host.
+2. In the Netlify dashboard, go to **Site configuration → Forms** and turn on an
+   email notification (or Slack/Zapier integration) so submissions actually reach
+   Terry — otherwise they'll sit unread in the Netlify dashboard.
+3. If you'd rather use a different form backend (Formspree, Basin, etc.) instead of
+   Netlify Forms, remove the `data-netlify`/`netlify-honeypot` attributes and point
+   `action` at that provider's endpoint per their docs.
 
 ## SEO basics already in place
 
-- Page title, meta description, and Open Graph tags in `<head>`
-- `LocalBusiness` structured data (JSON-LD) with service area and phone — update the
-  `url` and `address` fields once the domain and any shop address are finalized
-- Semantic headings and city names in real text (not just images) for local search
+- Unique page title, meta description, canonical URL, and Open Graph tags on every page
+- `BreadcrumbList` JSON-LD + a visible breadcrumb nav on every internal page
+- `LocalBusiness` JSON-LD (home page) and `Service` JSON-LD (each service page) —
+  update the `url`/`address` fields once the domain and shop address are finalized
+- `FAQPage` JSON-LD on `/faq/`, matching the visible questions exactly
+- `sitemap.xml` and `robots.txt` at the project root
+- Semantic headings and real city names in text (not just images) for local search
 
-## Deploying (once you have a domain)
+**Domain:** `terrysbobcatpoolremoval.com` is confirmed and already used as the real
+canonical/OG URL, `sitemap.xml`, and `robots.txt` domain throughout — no
+find-and-replace needed once it's connected in Netlify (see Deploying below).
 
-Easiest path, no GitHub required:
+## Deploying (GitHub → Netlify)
 
-1. Create a free account at [netlify.com](https://netlify.com).
-2. Drag the whole project folder onto the Netlify dashboard ("Deploys" tab has a
-   drop zone). It publishes instantly with a temporary netlify.app URL.
-3. In Netlify, go to **Domain settings → Add a domain**, enter the domain you bought,
-   and follow the DNS instructions it gives you (you'll add a couple of records at
-   wherever you bought the domain, e.g. GoDaddy/Namecheap/Google Domains).
-4. Netlify handles HTTPS automatically once DNS points to it.
+This repo already has a GitHub remote (`origin`), and the plan is to deploy through
+Netlify's Git integration rather than dragging a folder onto the dashboard:
 
-If you'd rather connect this to GitHub for automatic redeploys whenever the code
-changes, that's an optional later step — not required to launch.
+1. Push the latest commit to GitHub (`git push origin main`), if it isn't already there.
+2. In Netlify, create a free account at [netlify.com](https://netlify.com), then
+   **Add new site → Import an existing project → Deploy with GitHub**, and pick
+   this repo.
+3. Build settings: leave the build command blank and the publish directory as `/`
+   (or `.`) — this is a static site with no build step.
+4. Every push to `main` will auto-redeploy from then on, and Netlify Forms (see
+   above) starts working as soon as the first deploy finishes.
+5. Go to **Domain settings → Add a domain**, enter `terrysbobcatpoolremoval.com`,
+   and follow the DNS instructions Netlify gives you (a couple of records added
+   wherever the domain is registered). Netlify handles HTTPS automatically once
+   DNS points to it.
 
-## Local preview
+## Content that still needs to be filled in before launch
 
-Just open `index.html` directly in a browser, or run a tiny local server from this
-folder if you want it to behave exactly like a real deploy:
+These are flagged rather than guessed, per the project brief:
 
-```
-python3 -m http.server 8000
-```
-
-then visit `http://localhost:8000`.
+- **Domain** — confirmed as `terrysbobcatpoolremoval.com`; connect it in Netlify
+  per the Deploying section. See `LAUNCH-CHECKLIST.md` for the optional
+  shorter-domain/redirect discussion.
+- **Business street address** — the `PostalAddress` in each page's JSON-LD only has
+  region/country. Add `streetAddress`/`postalCode` once available (or omit entirely
+  if Terry operates without a public-facing shop address).
+- **Contractor license / business name note** — CA C-12 license #618640 is shown
+  sitewide (footer + About page), confirmed live on the CSLB lookup. That license is
+  registered to "A-1 HAULING," with no DBA on file for "Terry's Bobcat" — the site
+  intentionally shows the license number alone without pairing it to a business name.
+  Resolving the DBA question (if desired) is between Terry and CSLB, not a website change.
+- **More customer reviews** — only one real testimonial exists (David, San Jose,
+  carried over from the previous site). The reviews section says "more reviews
+  coming soon" rather than inventing others. No review structured data has been
+  added — add it only once there are enough genuine, policy-eligible reviews.
+- **Social media links** — none exist yet; add them to the footer once accounts are live.
+- **Service area** — currently the 10 South Bay cities already verified from the
+  previous site. Do not add more cities without Terry confirming he actively serves them.

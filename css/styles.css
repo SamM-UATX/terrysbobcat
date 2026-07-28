@@ -374,7 +374,7 @@ button { font-family: inherit; }
 
 /* ===== Why section photo ===== */
 .why-photo { margin-top: 24px; }
-.why-photo img { border-radius: var(--radius-lg); box-shadow: 0 8px 24px -12px rgba(0,0,0,.5); }
+.why-photo img { width: 100%; height: auto; border-radius: var(--radius-lg); box-shadow: 0 8px 24px -12px rgba(0,0,0,.5); }
 
 /* ===== Breadcrumbs ===== */
 .breadcrumbs { padding: 18px 0; border-bottom: 1px solid var(--line); }
@@ -387,7 +387,7 @@ button { font-family: inherit; }
 
 /* ===== Service hub / grid pages ===== */
 .service-detail-band { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; margin: 48px 0; }
-.service-detail-band img { border-radius: var(--radius-lg); box-shadow: var(--shadow); width: 100%; }
+.service-detail-band img { border-radius: var(--radius-lg); box-shadow: var(--shadow); width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
 .service-detail-band.reverse { direction: rtl; }
 .service-detail-band.reverse > * { direction: ltr; }
 .service-list { margin: 20px 0 0; display: flex; flex-direction: column; gap: 14px; }
